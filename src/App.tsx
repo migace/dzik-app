@@ -1,26 +1,70 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { Switch, Route, Redirect, useLocation } from "react-router-dom";
+import { isMobile } from "react-device-detect";
+import { Box } from "@chakra-ui/react";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+import { useLocalStorage } from "./hooks/useLocalStorage";
+import { Navbar } from "./components/Navbar";
+import { Bar } from "./components/Bar";
+import { Report, Home } from "./views";
+import { colors } from "./theme";
+import { Onboarding } from "./views/Onboarding";
+import { Alerts } from "./views/Alerts";
+import { Settings } from "./views/Settings";
+import { Wiki } from "./views/Wiki";
+
+export const App = () => {
+  const [isOnboardingCompleted, setIsOnboardingCompleted] = useLocalStorage(
+    "onboarding",
+    ""
   );
-}
+  const location = useLocation();
 
-export default App;
+  return (
+    <>
+      {!isMobile && <Navbar />}
+      <Box bg={isMobile ? colors.TURQUE : colors.WHITE} height="100%">
+        <Switch>
+          <Route path="/report">
+            <Report />
+          </Route>
+          <Route path="/stats">
+            <Home />
+          </Route>
+          <Route path="/alerts">
+            <Alerts />
+          </Route>
+          <Route path="/wiki">
+            <Wiki />
+          </Route>
+          <Route path="/settings">
+            <Settings />
+          </Route>
+          <Route
+            path="/onboarding"
+            render={() =>
+              !!!isOnboardingCompleted && isMobile ? (
+                <Onboarding onFinish={setIsOnboardingCompleted} />
+              ) : (
+                <Redirect to="/" />
+              )
+            }
+          />
+          <Route
+            path="/"
+            render={() =>
+              !!isOnboardingCompleted || !isMobile ? (
+                <Home />
+              ) : (
+                <Redirect to="/onboarding" />
+              )
+            }
+          />
+        </Switch>
+      </Box>
+      {isMobile && !!isOnboardingCompleted && (
+        <Bar reportActive={location.pathname === "/report"} />
+      )}
+    </>
+  );
+};
