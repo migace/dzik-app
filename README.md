@@ -3,6 +3,8 @@
 The project was created for the purpose of participating in [HackYeah](https://hackyeah.pl/). The task was to create an application
 for the Ministry of Agriculture and Rural Development in Poland.
 
+The purpose of the application was to create a system for reporting wild boar outbreaks in order to stop the spread of the disease - [African swine fever, ASF](https://en.wikipedia.org/wiki/African_swine_fever_virus)
+
 ## Available Scripts
 
 In the project directory, you can run:
